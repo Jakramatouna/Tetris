@@ -66,8 +66,8 @@ namespace Tetris
                 Console.ReadKey(true);
                 return;
             }
-            // For game border.
             Console.Clear();
+            // For game border
             drawBorder();
             Console.SetCursorPosition(5, 5);
             Console.WriteLine("Press any key");
