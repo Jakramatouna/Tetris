@@ -33,7 +33,7 @@ namespace Tetris
             {
                 if (args.Length != 2)
                 {
-                    Console.WriteLine("Program can work with two args (player name,theme)\ntheme\nCyan   => Press 1\nGreen => Press 2\nMagenta   => Press 3\nRed   => Press 4\nYellow   => Press any key\n");
+                    Console.WriteLine("Program can work with two args (player name,theme)\ntheme\nCyan   => Press 1\nGreen => Press 2\nMagenta   => Press 3\nRed   => Press 4\nYellow   => Press any numbers\n");
                     return;
                 }
                 if (args.Length == 2)
@@ -62,7 +62,7 @@ namespace Tetris
             }
             catch (Exception)
             {
-                Console.WriteLine("Wrong input !\nPlease enter again with player name and theme ....\ntheme\nCyan   => Press 1\nGreen => Press 2\nMagenta   => Press 3\nRed   => Press 4\nYellow   => Press any key\n");
+                Console.WriteLine("Wrong input !\nPlease enter again with player name and theme ....\ntheme\nCyan   => Press 1\nGreen => Press 2\nMagenta   => Press 3\nRed   => Press 4\nYellow   => Press any numbers\n");
                 Console.ReadKey(true);
                 return;
             }
