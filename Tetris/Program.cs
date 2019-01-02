@@ -1,4 +1,131 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Diagnostics;
 
+namespace Tetris
+{
+    static class Gameprogram
+    {
+        private static string playerName;
+        public static string Name
+            {
+                get => playerName;
+                set => playerName = value;
+            }
+        public static int theme;
+        public static string sqr = "◩";
+        public static int[,] grid = new int[23, 10];
+        public static int[,] droppedtetrominoeLocationGrid = new int[23, 10];
+        public static Stopwatch dropTimer = new Stopwatch();
+        public static int dropRate, dropTime = 300;
+        public static bool isDropped = false;
+        // Tetris block.
+        static TetrisObject.Tetrominoe tet;
+        // Tetris block that will be spawn next.
+        static TetrisObject.Tetrominoe nexttet;
+        public static ConsoleKeyInfo key;
+        public static bool isKeyPressed = false;
+        public static int linesCleared = 0, score = 0, hiScore = 0, level = 1;
+
+        static void Main(string[] args)
+        {
+            // For using unicode.
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            try
+            {
+                if (args.Length != 2)
+                {
+                    Console.WriteLine("Program can only work with two args (player name,theme)\n\n☆☆☆ theme ☆☆☆\n\nCyan     =>  Select 1\nGreen    =>  Select 2\nMagenta  =>  Select 3\nRed      =>  Select 4\nYellow   =>  Select any number\n");
+                    return;
+                }
+                if (args.Length == 2)
+                {
+                    GetPlayerName(args[0]);
+                    theme = Convert.ToInt32(args[1]);
+                    switch (theme)
+                    {
+                        case 1:
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            break;
+                        case 2:
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            break;
+                        case 3:
+                            Console.ForegroundColor = ConsoleColor.Magenta;
+                            break;
+                        case 4:
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            break;
+                        default:
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            break;
+                    }
+                }
+            }
+            // Exception for checking data type.
+            catch (FormatException)
+            {
+                Console.WriteLine("Wrong input ! \nTheme needs to be a number !!!\nPlease enter again with player name and theme ....\n\n☆☆☆ theme ☆☆☆\n\nCyan     =>  Select 1\nGreen    =>  Select 2\nMagenta  =>  Select 3\nRed      =>  Select 4\nYellow   =>  Select any number\n");
+                return;
+            }
+            Console.Clear();
+            // For game border
+            DrawBorder();
+            Console.SetCursorPosition(5, 5);
+            Console.WriteLine("Press any key");
+            Console.SetCursorPosition(7, 6);
+            Console.WriteLine("to start");
+            Console.SetCursorPosition(6, 8);
+            Console.WriteLine("☆Control☆");
+            Console.SetCursorPosition(2, 10);
+            Console.WriteLine("spacebar → rotate");
+            Console.SetCursorPosition(2, 11);
+            Console.WriteLine("left/right → move");
+            Console.SetCursorPosition(2, 12);
+            Console.WriteLine("up → quick drop");
+            Console.SetCursorPosition(2, 13);
+            Console.WriteLine("down → drop faster");
+            Console.ReadKey(true);
+            // After this ,game start !
+            // Time start.
+            dropTimer.Start();
+            Console.SetCursorPosition(25, 0);
+            Console.WriteLine($"Player {playerName} Level {level}");
+            Console.SetCursorPosition(25, 1);
+            Console.WriteLine($"Score {score}   ♚ Hi score {hiScore}");
+            Console.SetCursorPosition(25, 2);
+            Console.WriteLine($"LinesCleared {linesCleared}");
+            // Creating tetris block by instantiation an object from TetrisObject namespace and Tetrominoe class
+            nexttet = new TetrisObject.Tetrominoe();
+            tet = nexttet;
+            tet.Spawn();
+            nexttet = new TetrisObject.Tetrominoe();
+            Update();
+            Console.SetCursorPosition(0, 26);
+            Console.WriteLine("Game Over");
+            Console.SetCursorPosition(0, 27);
+            Console.WriteLine("Replay? (Y/N)");
+            string input = Console.ReadLine();
+            // Press Y or y to replay.
+            if (input == "y" || input == "Y")
+            {
+                int[,] grid = new int[23, 10];
+                droppedtetrominoeLocationGrid = new int[23, 10];
+                dropTimer = new Stopwatch();
+                dropRate = 300;
+                isDropped = false;
+                isKeyPressed = false;
+                linesCleared = 0;
+                score = 0;
+                level = 1;
+                GC.Collect();
+                Console.Clear();
+                Main(args);
+            }
+            else return;
+        }
+        // Expression bodied method for property.
         public static void GetPlayerName(string name) => Name = name;
         private static void Update()
         {
