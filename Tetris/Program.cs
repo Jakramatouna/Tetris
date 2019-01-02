@@ -1,130 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
 
-namespace Tetris
-{
-    static class Game_Program
-    {
-        public static string playerName;
-        public static int theme;
-        public static string sqr = "◼";
-        public static int[,] grid = new int[23, 10];
-        public static int[,] droppedtetrominoeLocationGrid = new int[23, 10];
-        public static Stopwatch timer = new Stopwatch();
-        public static Stopwatch dropTimer = new Stopwatch();
-        public static Stopwatch inputTimer = new Stopwatch();
-        public static int dropRate, dropTime = 300;
-        public static bool isDropped = false;
-        // Tetris block.
-        static TetrisObject.Tetrominoe tet;
-        // Tetris block that will be spawn next.
-        static TetrisObject.Tetrominoe nexttet;
-        public static ConsoleKeyInfo key;
-        public static bool isKeyPressed = false;
-        public static int linesCleared = 0, score = 0, hiScore = 0, level = 1;
-
-        static void Main(string[] args)
-        {
-            // For using unicode.
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
-            try
-            {
-                if (args.Length != 2)
-                {
-                    Console.WriteLine("Program can work with two args (player name,theme)\ntheme\nCyan   => Press 1\nGreen => Press 2\nMagenta   => Press 3\nRed   => Press 4\nYellow   => Press any numbers\n");
-                    return;
-                }
-                if (args.Length == 2)
-                {
-                    playerName = args[0];
-                    theme = Convert.ToInt32(args[1]);
-                    switch (theme)
-                    {
-                        case 1:
-                            Console.ForegroundColor = ConsoleColor.Cyan;
-                            break;
-                        case 2:
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            break;
-                        case 3:
-                            Console.ForegroundColor = ConsoleColor.Magenta;
-                            break;
-                        case 4:
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            break;
-                        default:
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            break;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Wrong input !\nPlease enter again with player name and theme ....\ntheme\nCyan   => Press 1\nGreen => Press 2\nMagenta   => Press 3\nRed   => Press 4\nYellow   => Press any numbers\n");
-                Console.ReadKey(true);
-                return;
-            }
-            Console.Clear();
-            // For game border
-            drawBorder();
-            Console.SetCursorPosition(5, 5);
-            Console.WriteLine("Press any key");
-            Console.SetCursorPosition(7, 6);
-            Console.WriteLine("to start");
-            Console.SetCursorPosition(6, 8);
-            Console.WriteLine("☆Control☆");
-            Console.SetCursorPosition(2, 10);
-            Console.WriteLine("spacebar → rotate");
-            Console.SetCursorPosition(2, 11);
-            Console.WriteLine("left/right → move");
-            Console.SetCursorPosition(2, 12);
-            Console.WriteLine("up → quick drop");
-            Console.SetCursorPosition(2, 13);
-            Console.WriteLine("down → drop faster");
-            Console.ReadKey(true);
-            // Time start.
-            timer.Start();
-            dropTimer.Start();
-            long time = timer.ElapsedMilliseconds;
-            Console.SetCursorPosition(25, 0);
-            Console.WriteLine($"Player {playerName} Level {level}");
-            Console.SetCursorPosition(25, 1);
-            Console.WriteLine($"Score {score}   ♚ Hi score {hiScore}");
-            Console.SetCursorPosition(25, 2);
-            Console.WriteLine($"LinesCleared {linesCleared}");
-            // Creating tetris block by instantiation an object from TetrisObject namespace and Tetrominoe class
-            nexttet = new TetrisObject.Tetrominoe();
-            tet = nexttet;
-            tet.Spawn();
-            nexttet = new TetrisObject.Tetrominoe();
-            Update();
-            Console.SetCursorPosition(0, 26);
-            Console.WriteLine("Game Over");
-            Console.SetCursorPosition(0, 27);
-            Console.WriteLine("Replay? (Y/N)");
-            string input = Console.ReadLine();
-            // Press Y or y to replay.
-            if (input == "y" || input == "Y")
-            {
-                int[,] grid = new int[23, 10];
-                droppedtetrominoeLocationGrid = new int[23, 10];
-                timer = new Stopwatch();
-                dropTimer = new Stopwatch();
-                inputTimer = new Stopwatch();
-                dropRate = 300;
-                isDropped = false;
-                isKeyPressed = false;
-                linesCleared = 0;
-                score = 0;
-                level = 1;
-                GC.Collect();
-                Console.Clear();
-                Main(args);
-            }
-            else return;
-        }
+        public static void GetPlayerName(string name) => Name = name;
         private static void Update()
         {
             //Update loop.
@@ -133,7 +8,6 @@ namespace Tetris
                 dropTime = (int)dropTimer.ElapsedMilliseconds;
                 if (dropTime > dropRate)
                 {
-                    dropTime = 0;
                     dropTimer.Restart();
                     tet.Drop();
                 }
@@ -145,8 +19,7 @@ namespace Tetris
 
                     isDropped = false;
                 }
-                int j;
-                for (j = 0; j < 10; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     if (droppedtetrominoeLocationGrid[0, j] == 1)
                         return;
@@ -243,7 +116,7 @@ namespace Tetris
             else
                 isKeyPressed = false;
 
-            if (Game_Program.key.Key == ConsoleKey.LeftArrow & !tet.isSomethingLeft() & isKeyPressed)
+            if (Gameprogram.key.Key == ConsoleKey.LeftArrow & !tet.IsSomethingLeft() & isKeyPressed)
             {
                 for (int i = 0; i < 4; i++)
                 {
@@ -251,7 +124,7 @@ namespace Tetris
                 }
                 tet.Update();
             }
-            else if (Game_Program.key.Key == ConsoleKey.RightArrow & !tet.isSomethingRight() & isKeyPressed)
+            else if (Gameprogram.key.Key == ConsoleKey.RightArrow & !tet.IsSomethingRight() & isKeyPressed)
             {
                 for (int i = 0; i < 4; i++)
                 {
@@ -259,18 +132,18 @@ namespace Tetris
                 }
                 tet.Update();
             }
-            if (Game_Program.key.Key == ConsoleKey.DownArrow & isKeyPressed)
+            if (Gameprogram.key.Key == ConsoleKey.DownArrow & isKeyPressed)
             {
                 tet.Drop();
             }
-            if (Game_Program.key.Key == ConsoleKey.UpArrow & isKeyPressed)
+            if (Gameprogram.key.Key == ConsoleKey.UpArrow & isKeyPressed)
             {
-                for (; tet.isSomethingBelow() != true;)
+                for (; tet.IsSomethingBelow() != true;)
                 {
                     tet.Drop();
                 }
             }
-            if (Game_Program.key.Key == ConsoleKey.Spacebar & isKeyPressed)
+            if (Gameprogram.key.Key == ConsoleKey.Spacebar & isKeyPressed)
             {
                 //rotate
                 tet.Rotate();
@@ -296,7 +169,7 @@ namespace Tetris
                 }
             }
         }
-        public static void drawBorder()
+        public static void DrawBorder()
         {
             for (int lengthCount = 0; lengthCount < 23; ++lengthCount)
             {
@@ -326,14 +199,14 @@ namespace TetrisObject
         public static int[,] J = { { 1, 0, 0 }, { 1, 1, 1 } };//3
         public static int[,] L = { { 0, 0, 1 }, { 1, 1, 1 } };//3
         public static List<int[,]> tetrominoes = new List<int[,]>() { I, O, T, S, Z, J, L };
-        private bool isErect = false;
+        private readonly bool isErect = false;
         private int[,] shape;
-        private int[] pix = new int[2];
         public List<int[]> location = new List<int[]>();
         public Tetrominoe()
         {
             Random rnd = new Random();
             shape = tetrominoes[rnd.Next(0, 7)];
+            // These loops will clear a space for showing the next tetris block.
             for (int i = 23; i < 33; ++i)
             {
                 for (int j = 3; j < 10; j++)
@@ -343,7 +216,8 @@ namespace TetrisObject
                 }
 
             }
-            Tetris.Game_Program.drawBorder();
+            Tetris.Gameprogram.DrawBorder();
+            // These loops show the next tetris block to be droped.
             for (int i = 0; i < shape.GetLength(0); i++)
             {
                 for (int j = 0; j < shape.GetLength(1); j++)
@@ -351,7 +225,7 @@ namespace TetrisObject
                     if (shape[i, j] == 1)
                     {
                         Console.SetCursorPosition(((10 - shape.GetLength(1)) / 2 + j) * 2 + 20, i + 5);
-                        Console.Write(Tetris.Game_Program.sqr);
+                        Console.Write(Tetris.Gameprogram.sqr);
                     }
                 }
             }
@@ -373,13 +247,13 @@ namespace TetrisObject
         public void Drop()
         {
 
-            if (isSomethingBelow())
+            if (IsSomethingBelow())
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] = 1;
+                    Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] = 1;
                 }
-                Tetris.Game_Program.isDropped = true;
+                Tetris.Gameprogram.isDropped = true;
 
             }
             else
@@ -438,23 +312,23 @@ namespace TetrisObject
                     templocation[i] = TransformMatrix(location[i], location[2], "Clockwise");
                 }
             }
-            for (int count = 0; isOverlayLeft(templocation) != false | isOverlayRight(templocation) != false | isOverlayBelow(templocation) != false; count++)
+            for (int count = 0; IsOverlayLeft(templocation) != false | IsOverlayRight(templocation) != false | IsOverlayBelow(templocation) != false; count++)
             {
-                if (isOverlayLeft(templocation) == true)
+                if (IsOverlayLeft(templocation) == true)
                 {
                     for (int i = 0; i < location.Count; i++)
                     {
                         templocation[i][1] += 1;
                     }
                 }
-                if (isOverlayRight(templocation) == true)
+                if (IsOverlayRight(templocation) == true)
                 {
                     for (int i = 0; i < location.Count; i++)
                     {
                         templocation[i][1] -= 1;
                     }
                 }
-                if (isOverlayBelow(templocation) == true)
+                if (IsOverlayBelow(templocation) == true)
                 {
                     for (int i = 0; i < location.Count; i++)
                     {
@@ -484,7 +358,7 @@ namespace TetrisObject
             return new int[] { pcoord[0] + axis[0], pcoord[1] + axis[1] };
         }
 
-        public bool isSomethingBelow()
+        public bool IsSomethingBelow()
         {
             for (int i = 0; i < 4; i++)
             {
@@ -492,7 +366,7 @@ namespace TetrisObject
                     return true;
                 if (location[i][0] + 1 < 23)
                 {
-                    if (Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0] + 1, location[i][1]] == 1)
+                    if (Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0] + 1, location[i][1]] == 1)
                     {
                         return true;
                     }
@@ -500,7 +374,7 @@ namespace TetrisObject
             }
             return false;
         }
-        public bool? isOverlayBelow(List<int[]> location)
+        public bool? IsOverlayBelow(List<int[]> location)
         {
             List<int> ycoords = new List<int>();
             for (int i = 0; i < 4; i++)
@@ -525,7 +399,7 @@ namespace TetrisObject
                 {
                     if (ycoords.Max() == location[i][0] | ycoords.Max() - 1 == location[i][0])
                     {
-                        if (Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -535,7 +409,7 @@ namespace TetrisObject
                 {
                     if (ycoords.Max() == location[i][0])
                     {
-                        if (Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -544,7 +418,7 @@ namespace TetrisObject
             }
             return false;
         }
-        public bool isSomethingLeft()
+        public bool IsSomethingLeft()
         {
             for (int i = 0; i < 4; i++)
             {
@@ -552,14 +426,14 @@ namespace TetrisObject
                 {
                     return true;
                 }
-                else if (Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0], location[i][1] - 1] == 1)
+                else if (Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0], location[i][1] - 1] == 1)
                 {
                     return true;
                 }
             }
             return false;
         }
-        public bool? isOverlayLeft(List<int[]> location)
+        public bool? IsOverlayLeft(List<int[]> location)
         {
             List<int> xcoords = new List<int>();
             for (int i = 0; i < 4; i++)
@@ -584,7 +458,7 @@ namespace TetrisObject
                 {
                     if (xcoords.Min() == location[i][1] | xcoords.Min() + 1 == location[i][1])
                     {
-                        if (Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -595,7 +469,7 @@ namespace TetrisObject
                 {
                     if (xcoords.Min() == location[i][1])
                     {
-                        if (Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -604,7 +478,7 @@ namespace TetrisObject
             }
             return false;
         }
-        public bool isSomethingRight()
+        public bool IsSomethingRight()
         {
             for (int i = 0; i < 4; i++)
             {
@@ -612,14 +486,14 @@ namespace TetrisObject
                 {
                     return true;
                 }
-                else if (Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0], location[i][1] + 1] == 1)
+                else if (Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0], location[i][1] + 1] == 1)
                 {
                     return true;
                 }
             }
             return false;
         }
-        public bool? isOverlayRight(List<int[]> location)
+        public bool? IsOverlayRight(List<int[]> location)
         {
             List<int> xcoords = new List<int>();
             for (int i = 0; i < 4; i++)
@@ -644,7 +518,7 @@ namespace TetrisObject
                 {
                     if (xcoords.Max() == location[i][1] | xcoords.Max() - 1 == location[i][1])
                     {
-                        if (Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -655,7 +529,7 @@ namespace TetrisObject
                 {
                     if (xcoords.Max() == location[i][1])
                     {
-                        if (Tetris.Game_Program.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (Tetris.Gameprogram.droppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -671,14 +545,14 @@ namespace TetrisObject
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Tetris.Game_Program.grid[i, j] = 0;
+                    Tetris.Gameprogram.grid[i, j] = 0;
                 }
             }
             for (int i = 0; i < 4; i++)
             {
-                Tetris.Game_Program.grid[location[i][0], location[i][1]] = 1;
+                Tetris.Gameprogram.grid[location[i][0], location[i][1]] = 1;
             }
-            Tetris.Game_Program.Draw();
+            Tetris.Gameprogram.Draw();
         }
     }
 }
